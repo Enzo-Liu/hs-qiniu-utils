@@ -26,7 +26,6 @@ import           Network.URI (escapeURIString)
 
 import Qiniu.Utils
 import           Network.URI (isUnreserved, escapeURIString)
-import Codec.Binary.UTF8.String
 
 -- }}}1
 
