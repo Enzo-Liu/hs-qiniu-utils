@@ -192,7 +192,7 @@ keyToUrlPath :: ResourceKey -> String
 -- {{{1
 keyToUrlPath (ResourceKey key) = '/' : (escapeURIString isSafe . encodeString) key
     where
-      isSafe = flip notElem $ asString "?#"
+      isSafe = const False
 -- }}}1
 
 
