@@ -26,6 +26,7 @@ import           Network.URI (escapeURIString)
 
 import Qiniu.Utils
 import           Network.URI (isUnreserved, escapeURIString)
+import           Network.URI.Encode (encode)
 
 -- }}}1
 
@@ -301,7 +302,6 @@ logSource = "QiNiu"
 keyToUrlPath :: IsString s => ResourceKey -> s
 -- {{{1
 keyToUrlPath (ResourceKey key) = fromString $ '/' : encode key
->>>>>>> update
 -- }}}1
 
 
