@@ -15,7 +15,7 @@ import           Database.Persist.Sql (PersistFieldSql)
 import           Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 import           Data.Aeson (FromJSON, ToJSON, toJSON, object, (.=))
 import           Data.Time (NominalDiffTime, addUTCTime)
-import           Network.URI (isUnreserved, escapeURIString)
+import           Network.URI.Encode (encode)
 
 -- }}}1
 
@@ -189,9 +189,7 @@ logSource = "QiNiu"
 -- 七牛签名要求的url是要恰到好处的转义，完全没转义的不能用，完全转义的也不能用
 keyToUrlPath :: ResourceKey -> String
 -- {{{1
-keyToUrlPath (ResourceKey key) = '/' : escapeURIString isSafe key
-    where
-      isSafe = const False
+keyToUrlPath (ResourceKey key) = '/' : encode key
 -- }}}1
 
 
