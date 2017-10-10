@@ -157,8 +157,7 @@ uploadOneFile sess fp = do
         bucket  = roBucket ro
         save_key = roResourceSaveKey ro
         region  = roRegion ro
-    pp0 <- mkPutPolicy (Scope bucket Nothing) save_key (fromIntegral (3600*24 :: Int))
-    let pp = pp0
+    pp <- mkPutPolicy (Scope bucket Nothing) save_key (fromIntegral (3600*24 :: Int))
     let upload_token = uploadToken skey akey pp
     let rkey = Nothing
     ws_result <- (liftIO $ LB.readFile fp)
