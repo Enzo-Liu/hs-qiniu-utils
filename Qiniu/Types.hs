@@ -18,12 +18,16 @@ import           Database.Persist.Sql (PersistFieldSql)
 import           Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 import           Data.Aeson (FromJSON, ToJSON, toJSON, object, (.=))
 import           Data.Time (NominalDiffTime, addUTCTime)
+<<<<<<< HEAD
 import           Network.URI.Encode (encode)
 import           Network.HTTP (urlEncodeVars)
 import           Network.HTTP.Types (renderQueryText)
 import           Network.URI (escapeURIString)
 
 import Qiniu.Utils
+import           Network.URI (isUnreserved, escapeURIString)
+import Codec.Binary.UTF8.String
+
 -- }}}1
 
 
