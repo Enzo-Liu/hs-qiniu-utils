@@ -301,7 +301,8 @@ logSource = "QiNiu"
 -- 七牛签名要求的url是要恰到好处的转义，完全没转义的不能用，完全转义的也不能用
 keyToUrlPath :: IsString s => ResourceKey -> s
 -- {{{1
-keyToUrlPath (ResourceKey key) = '/' : encode key
+keyToUrlPath (ResourceKey key) = fromString $ '/' : encode key
+>>>>>>> update
 -- }}}1
 
 
