@@ -2,9 +2,9 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                qiniu-utils
-version:             0.8.0.0
--- synopsis:
--- description:
+version:             0.9.0.0
+-- synopsis:            
+-- description:         
 license:             BSD3
 license-file:        LICENSE
 author:              Gilbert Fine
