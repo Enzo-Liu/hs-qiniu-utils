@@ -8,6 +8,7 @@ import           ClassyPrelude
 import           Data.Byteable        (Byteable(..))
 import qualified Data.ByteString.Base16 as B16
 import qualified Data.ByteString.Base64.URL as B64U
+import qualified Data.ByteString.Builder as BB
 import qualified Data.Aeson.TH as AT
 #if defined(PERSISTENT)
 import           Database.Persist (PersistField)
@@ -18,6 +19,7 @@ import           Data.Aeson (FromJSON, ToJSON, toJSON, object, (.=))
 import           Data.Time (NominalDiffTime, addUTCTime)
 import           Network.URI.Encode (encode)
 import           Network.HTTP (urlEncodeVars)
+import           Network.HTTP.Types (renderQueryText)
 import           Network.URI (escapeURIString)
 -- }}}1
 
@@ -197,7 +199,7 @@ instance ToJSON PutPolicy where
         where
           cb_urls = ppCallbackUrls pp
           cb_var_map = ppCallbackBody pp
-          map_to_qs = urlEncodeVars . map (unpack *** unpack) . mapToList
+          map_to_qs = decodeUtf8 . BB.toLazyByteString . renderQueryText False . map (second Just) . mapToList
           cb_var_map_qs = map_to_qs <$> cb_var_map
           cb_var_map_json = cb_var_map
 -- }}}1
