@@ -8,7 +8,7 @@ import           ClassyPrelude
 import           Data.Byteable        (Byteable(..))
 import qualified Data.ByteString.Base16 as B16
 import qualified Data.ByteString.Base64.URL as B64U
-import qualified Data.ByteString.Builder as BB
+import qualified Data.Aeson.Text as A
 import qualified Data.Aeson.TH as AT
 #if defined(PERSISTENT)
 import           Database.Persist (PersistField)
@@ -169,7 +169,7 @@ instance ToJSON PutPolicy where
 
             , if null cb_urls
                  then Nothing
-                 else Just $ "callbackUrl" .= cb_urls
+                 else Just $ "callbackUrl" .= intercalate ";" cb_urls
 
             , if null cb_urls
                  then Nothing
@@ -177,10 +177,9 @@ instance ToJSON PutPolicy where
 
             , if null cb_urls
                  then Nothing
-                 else join $ flip fmap (ppCallbackBodyType pp) $ \ t ->
-                        case t of
-                          CbQueryString -> fmap ("callbackBody" .=) cb_var_map_qs
-                          CbJson -> fmap ("callbackBody" .=) cb_var_map_json
+                 else case effective_callback_body_type of
+                        CbQueryString -> fmap ("callbackBody" .=) cb_var_map_qs
+                        CbJson -> ("callbackBody" .=) . A.encodeToLazyText <$> cb_var_map_json
 
             , if null cb_urls
                  then Nothing
@@ -189,7 +188,10 @@ instance ToJSON PutPolicy where
                           CbQueryString -> "callbackBodyType" .= asText "application/x-www-form-urlencoded"
                           CbJson -> "callbackBodyType" .= asText "application/json"
 
-            , Just $ "persistentOps" .= encodeFopCmdList (ppPersistentOps pp)
+            , case encodeFopCmdList (ppPersistentOps pp) of
+                t | not (null t) -> Just $ "persistentOps" .= t
+                  | otherwise    -> Nothing
+
             , fmap ("persistentNotifyUrl" .=) (ppPersistentNotifyUrl pp)
             , fmap (("persistentPipeline" .=) . unPipeline)
                     (ppPersistentPipeline pp)
@@ -204,9 +206,13 @@ instance ToJSON PutPolicy where
         where
           cb_urls = ppCallbackUrls pp
           cb_var_map = ppCallbackBody pp
-          map_to_qs = decodeUtf8 . BB.toLazyByteString . renderQueryText False . map (second Just) . mapToList
+
+          map_to_qs :: Map Text Text -> Text
+          map_to_qs m = intercalate "&" $ flip map (mapToList m) $ \ (k, v) -> k <> "=" <> v
+
           cb_var_map_qs = map_to_qs <$> cb_var_map
           cb_var_map_json = cb_var_map
+          effective_callback_body_type = fromMaybe CbQueryString $ ppCallbackBodyType pp
 -- }}}1
 
 
