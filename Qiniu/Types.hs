@@ -22,6 +22,8 @@ import           Network.URI.Encode (encode)
 import           Network.HTTP (urlEncodeVars)
 import           Network.HTTP.Types (renderQueryText)
 import           Network.URI (escapeURIString)
+
+import Qiniu.Utils
 -- }}}1
 
 
@@ -76,9 +78,9 @@ type Entry = (Bucket, ResourceKey)
 showEntry :: Entry -> Text
 showEntry (bucket, rkey) = mconcat [ "(", unBucket bucket, ", ", unResourceKey rkey, ")" ]
 
-encodedEntryUri :: Entry -> ByteString
+encodedEntryUri :: IsString s => Entry -> s
 encodedEntryUri (bucket, key) =
-  B64U.encode $ encodeUtf8 (unBucket bucket) <> ":" <> encodeUtf8 (unResourceKey key)
+  base64UrlEncode $ encodeUtf8 $ unBucket bucket <> ":" <> unResourceKey key
 
 
 newtype EtagHash = EtagHash { unEtagHash :: Text }
